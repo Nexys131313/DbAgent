@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Reflection;
+using DbAgent.Watcher.Attributes;
 using DBAgent.Watcher.Entities;
 using DBAgent.Watcher.Enums;
-using DBAgent.Watcher.Events.Args;
-using DBAgent.Watcher.Events.Handlers;
-using DBAgent.Watcher.Extensions;
+using DbAgent.Watcher.Events.Args;
+using DbAgent.Watcher.Events.Handlers;
+using DbAgent.Watcher.Helpers;
 using DBAgent.Watcher.Helpers;
+using DbAgent.Watcher.Models;
 using DBAgent.Watcher.Models;
 using DBAgent.Watcher.Readers;
 using FirebirdSql.Data.FirebirdClient;
@@ -15,7 +19,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DBAgent.Watcher
 {
-    public class FbSqlWatcher: IDisposable
+    public class FbSqlWatcher<TModel> : IDisposable where TModel : IModel, new()
     {
         private readonly FbSqlWatcherOptions _options;
         private readonly TriggersStorage _triggersStorage;
@@ -28,7 +32,7 @@ namespace DBAgent.Watcher
             _triggersStorage = new TriggersStorage(options.TriggersFilePath, true);
             _triggersStorage.AddTriggersFromFileSafe(_options.TriggersFilePath);
             _tempDbReader = new FbSqlReader(WatcherResourceManager.TempDbConnectionStringSql);
-            Logger = new LoggerFactory().CreateLogger<FbSqlWatcher>();
+            Logger = new LoggerFactory().CreateLogger<FbSqlWatcher<ProcessEventsActionModel>>();
         }
 
         public FbSqlWatcher(FbSqlWatcherOptions options, ILogger logger)
@@ -41,41 +45,32 @@ namespace DBAgent.Watcher
         }
 
         public IEnumerable<TriggerMetaData> CurrentTriggers => _triggersStorage.Triggers;
+        public string ConnectionString => WatcherResourceManager.MainDbConnectionStringSql;
         protected ILogger Logger { get; private set; }
 
-        public event ProcessEventsChangedEventHandler ProcessEventsChanged;
+        public event TableChangedEventHandler<TModel> TableChanged;
 
-        public void EnsureAllTriggersExists()
+        public TriggerMetaData AddTrigger(SqlTriggerScheme<TModel> scheme)
         {
-            using (Logger.BeginScope(LoggerHelper.GetCaller()))
+            var sqlQuery = SqlTriggerBuilder.BuildSqlTrigger(scheme);
+            ExecuteNonQuery(sqlQuery);
+
+            var triggerMetaData = new TriggerMetaData
             {
-                try
-                {
-                    foreach (var table in _options.Tables)
-                    {
-                        var triggers = EnsureTriggersExists(table);
+                Name = scheme.TriggerName,
+                CreationTime = DateTime.Now,
+                EventName = scheme.EventName,
+                Type = scheme.TriggerType
+            };
 
-                        foreach (var trigger in triggers.Where(trigger => _triggersStorage.IsContains(trigger) == false))
-                            _triggersStorage.AddTrigger(trigger);
-
-                        Logger.LogDebug($"Triggers for table: {table} created");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex.ToString());
-                    throw;
-                }
-            }
-
+            _triggersStorage.AddTriggerIfNonExists(triggerMetaData);
+            return triggerMetaData;
         }
 
         public void EnsureAllTriggersRemoved()
         {
             foreach (var triggerMetaData in CurrentTriggers)
-            {
                 EnsureTriggerRemoved(triggerMetaData);
-            }
         }
 
         public void EnsureTriggerRemoved(TriggerMetaData trigger)
@@ -83,61 +78,32 @@ namespace DBAgent.Watcher
             using (Logger.BeginScope(LoggerHelper.GetCaller()))
             {
                 var triggerName = trigger.Name;
+                var cmdQuery = $"DROP TRIGGER {triggerName}";
 
-                try
+                ExecuteNonQuery(cmdQuery, (ex) =>
                 {
-                    using (var connection = new FbConnection(GetConnectionString()))
-                    {
-                        connection.Open();
-
-                        var cmdQuery = $"DROP TRIGGER {triggerName}";
-
-                        using (var command = new FbCommand(cmdQuery, connection))
-                        {
-                            command.ExecuteNonQuery();
-                        }
-
-                        connection.Close();
-                        _triggersStorage.RemoveTrigger(trigger);
-                        Logger.LogDebug($"Trigger removed: {trigger.Name}");
-                    }
-                }
-                catch (FbException ex)
-                {
-                    // trigger already deleted
-                    if (ex.ErrorCode == 335544351)
-                    {
+                    var fbEx = (FbException)ex;
+                    if (fbEx.ErrorCode == 335544351) // trigger already deleted
                         Logger.LogWarning($"Trigger already removed: {trigger.Name}");
-                        _triggersStorage.RemoveTrigger(trigger);
-                        return;
-                    }
-                    throw;
-                }
+                    else
+                        throw ex;
+
+                });
+
+                _triggersStorage.RemoveTriggerIfExists(trigger);
             }
         }
 
+        //todo remove, for test only
         public void InsertRandomToProcessEvents()
         {
             using (Logger.BeginScope(LoggerHelper.GetCaller()))
             {
-                using (var connection = new FbConnection(GetConnectionString()))
-                {
-                    connection.Open();
-                    var rnd = new Random();
-                    var id = rnd.Next(1, 1000000);
-
-                    var cmdQuery = $"INSERT INTO PROCESS_EVENTS (ID) VALUES ({id});";
-
-                    using (var command = new FbCommand(cmdQuery, connection))
-                    {
-                        command.ExecuteNonQuery();
-                    }
-
-                    connection.Close();
-                    Logger.LogDebug("PROCESS_EVENTS random insert executed");
-                }
+                var rnd = new Random();
+                var id = rnd.Next(1, 1000000);
+                var cmdQuery = $"INSERT INTO PROCESS_EVENTS (ID) VALUES ({id});";
+                ExecuteNonQuery(cmdQuery);
             }
-
         }
 
         public void InitializeListeners()
@@ -146,7 +112,7 @@ namespace DBAgent.Watcher
             {
                 _remoteEvent?.Dispose();
 
-                _remoteEvent = new FbRemoteEvent(GetConnectionString());
+                _remoteEvent = new FbRemoteEvent(ConnectionString);
 
                 var triggers = _triggersStorage.Triggers;
                 var events = triggers.Select(item => item.EventName);
@@ -155,82 +121,69 @@ namespace DBAgent.Watcher
             }
         }
 
-        private void OnDbEvent(object sender, FbRemoteEventCountsEventArgs e)
+        private void OnDbEvent(object sender, FbRemoteEventCountsEventArgs eventArgs)
         {
-            Logger.LogInformation($"New event: {e.Name}");
-            var tableType = _triggersStorage.ToTable(e.Name);
+            Logger.LogInformation($"New event: {eventArgs.Name}");
 
-            switch (tableType)
+            var model = GetModelOrNull(eventArgs.Name);
+            if (model == null)
             {
-                case TableType.ProcessEvents:
-                    OnProcessEventsChanged(e.Name);
-                    break;
-                default:
-                    throw new Exception($"Table: {tableType} not supported");
+                Logger.LogWarning($"Can't find model for event: {eventArgs.Name}");
+                return;
             }
-        }
 
-        private void OnProcessEventsChanged(string eventName)
-        {
-            var models = _tempDbReader.ReadModels<ProcessEventsActionModel>();
-            var args = new ProcessEventsChangedEventArgs { Models = models };
-            ProcessEventsChanged?.Invoke(this, args);
-        }
-
-        private IEnumerable<TriggerMetaData> EnsureTriggersExists(TableType table)
-        {
-            using (Logger.BeginScope(LoggerHelper.GetCaller()))
+            var models = _tempDbReader.ReadModels<TModel>();
+            var args = new TableChangedEventArgs<TModel>()
             {
-                var result = new List<TriggerMetaData>();
+                ChangedModels = models
+            };
 
-                using (var connection = new FbConnection(GetConnectionString()))
+            TableChanged?.Invoke(this, args);
+        }
+
+        private static TModel GetModelOrNull(string eventName)
+        {
+            var types = Assembly.GetExecutingAssembly().GetTypes();
+
+            foreach (var type in types)
+            {
+                var attribute = type.GetCustomAttribute<DbTableAttribute>();
+                if (attribute == null) continue;
+
+                if (!attribute.EventNames.Contains(eventName)) continue;
+
+                var instance = Activator.CreateInstance(type);
+                return (TModel)instance;
+            }
+
+            return default;
+        }
+
+        private void ExecuteNonQuery(string cmdQuery)
+        {
+            using (var connection = new FbConnection(ConnectionString))
+            {
+                connection.Open();
+
+                using (var command = new FbCommand(cmdQuery, connection))
                 {
-                    connection.Open();
-
-                    var queryList = WatcherResourceManager.GetSqlTriggerQueries(table);
-
-                    foreach (var query in queryList)
-                    {
-                        using (var command = new FbCommand(query, connection))
-                        {
-                            command.ExecuteNonQuery(OnAddTriggerException);
-                        }
-
-                        var triggerMetaData = new TriggerMetaData
-                        {
-                            Name = TriggerExtractor.ExtractTriggerName(query),
-                            CreationTime = DateTime.Now,
-                            EventName = TriggerExtractor.ExtractEventName(query),
-                            Type = TriggerExtractor.ExtractTriggerType(query),
-                            TableType = table,
-                        };
-
-                        Logger.LogDebug($"Trigger created: {triggerMetaData.Name}");
-                        result.Add(triggerMetaData);
-                    }
-
-                    connection.Close();
+                    command.ExecuteNonQuery();
                 }
 
-                return result;
+                connection.Close();
             }
         }
 
-        private static void OnAddTriggerException(Exception ex)
+        private void ExecuteNonQuery(string cmdQuery, Action<Exception> onError)
         {
-            var fbEx = (FbException)ex;
-
-            //// mean trigger already exists
-            //if (fbEx.ErrorCode == 335544351)
-            //    return;
-
-            throw ex;
-        }
-
-        private string GetConnectionString()
-        {
-            var connectionString = WatcherResourceManager.MainDbConnectionStringSql;
-            return connectionString;
+            try
+            {
+                ExecuteNonQuery(cmdQuery);
+            }
+            catch (Exception ex)
+            {
+                onError.Invoke(ex);
+            }
         }
 
         public void Dispose()

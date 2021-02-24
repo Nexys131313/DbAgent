@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DBAgent.Watcher.Enums;
+using Newtonsoft.Json;
 
 namespace DbAgent.Watcher.Helpers
 {
-    public class SqlTriggerScheme<TModel>
+    public class SqlTriggerScheme<TModel> 
     {
         public string TriggerName { get; set; }
         public string TableName { get; set; }
@@ -19,6 +16,7 @@ namespace DbAgent.Watcher.Helpers
         public string ExternalUser { get; set; }
         public string ExternalPassword { get; set; }
 
-        public TModel InsertDataModel { get; set; }
+        [JsonIgnore]
+        public Type ModelType => typeof(TModel);
     }
 }

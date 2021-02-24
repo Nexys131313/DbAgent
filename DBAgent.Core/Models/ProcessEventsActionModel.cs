@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DbAgent.Watcher.Attributes;
@@ -8,7 +9,8 @@ using DbAgent.Watcher.Models;
 namespace DBAgent.Watcher.Models
 {
     [Serializable]
-    [DbTable("PROCESS_EVENTS_ACTIONS")]
+    [DbTable("PROCESS_EVENTS_ACTIONS", 
+        new[] { "PROCESS_EVENT_INSERT", "PROCESS_EVENT_UPDATE", "PROCESS_EVENT_DELETE" })]
     public class ProcessEventsActionModel : IModel
     {
         public ProcessEventsActionModel() { }
@@ -59,5 +61,6 @@ namespace DBAgent.Watcher.Models
             return attribute;
 
         }
+
     }
 }

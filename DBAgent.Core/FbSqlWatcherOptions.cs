@@ -8,6 +8,5 @@ namespace DBAgent.Watcher
     public class FbSqlWatcherOptions
     {
         public string TriggersFilePath { get; set; }
-        public List<TableType> Tables { get; set; } = new List<TableType>();
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.Serialization;
 using DbAgent.Watcher.Attributes;
 using DBAgent.Watcher.Enums;
+using DBAgent.Watcher.Helpers;
 using DbAgent.Watcher.Models;
 
 namespace DbAgent.Watcher.Helpers
@@ -9,7 +11,7 @@ namespace DbAgent.Watcher.Helpers
     public class SqlTriggerBuilder
     {
         public static string BuildSqlTrigger<TModel>(SqlTriggerScheme<TModel> scheme)
-            where TModel : IModel, new()
+            where TModel : IModel,  new()
         {
             var sql = GetOpenPart(scheme);
             sql += GetInsertQuery(scheme);
@@ -19,6 +21,7 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetInsertQuery<TModel>(SqlTriggerScheme<TModel> scheme)
+            where TModel : IModel, new()
         {
             var query = $"S = 'INSERT INTO {scheme.ExternalTableName} ";
             query += GetTableFieldsSequence(scheme);
@@ -27,12 +30,13 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetExecuteStatement<TModel>(SqlTriggerScheme<TModel> scheme)
+            where TModel : IModel, new()
         {
             var prefix = GetExternalInsertPrefix(scheme.TriggerType);
             var sql = "EXECUTE STATEMENT (:S) (";
             var counter = 1;
 
-            foreach (var propertyInfo in scheme.InsertDataModel.GetType().GetProperties())
+            foreach (var propertyInfo in scheme.ModelType.GetProperties())
             {
                 var attribute = (DbPropertyAttribute)propertyInfo.GetCustomAttribute(typeof(DbPropertyAttribute));
 
@@ -59,6 +63,7 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetExternalInsertPrefix(TriggerType triggerType)
+
         {
             switch (triggerType)
             {
@@ -74,11 +79,12 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetValuesSequence<TModel>(SqlTriggerScheme<TModel> scheme)
+            where TModel : IModel, new()
         {
             var sequence = "values (";
             var counter = 1;
 
-            foreach (var propertyInfo in scheme.InsertDataModel.GetType().GetProperties())
+            foreach (var propertyInfo in scheme.ModelType.GetProperties())
             {
                 var attribute = (DbPropertyAttribute)propertyInfo.GetCustomAttribute(typeof(DbPropertyAttribute));
                 if (attribute.OnlyTempDbField) continue;
@@ -95,10 +101,11 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetTableFieldsSequence<TModel>(SqlTriggerScheme<TModel> scheme)
+            where TModel : IModel,  new()
         {
             var sequence = "(";
 
-            foreach (var propertyInfo in scheme.InsertDataModel.GetType().GetProperties())
+            foreach (var propertyInfo in scheme.ModelType.GetProperties())
             {
                 var attribute = (DbPropertyAttribute)propertyInfo.GetCustomAttribute(typeof(DbPropertyAttribute));
 
@@ -119,9 +126,11 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetOpenPart<TModel>(SqlTriggerScheme<TModel> scheme)
+            where TModel : IModel,  new()
         {
-            var sql = $"CREATE OR ALTER {scheme.TriggerName} FOR {scheme.TableName}{Environment.NewLine}";
-            sql += $"ACTIVE AFTER INSERT POSITION 0{Environment.NewLine}";
+            var triggerName = TriggerTypeConverter.ToName(scheme.TriggerType);
+            var sql = $"CREATE OR ALTER TRIGGER {scheme.TriggerName} FOR {scheme.TableName}{Environment.NewLine}";
+            sql += $"ACTIVE AFTER {triggerName} POSITION 0{Environment.NewLine}";
             sql += $"AS{Environment.NewLine}";
             sql += $"DECLARE S VARCHAR(3000);{Environment.NewLine}";
             sql += $"BEGIN{Environment.NewLine}";
@@ -129,6 +138,7 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetClosePart<TModel>(SqlTriggerScheme<TModel> scheme)
+            where TModel : IModel,  new()
         {
             var sql = $"ON EXTERNAL DATA SOURCE '{scheme.ExternalDataSource}' ";
             sql += $"AS USER '{scheme.ExternalUser}' PASSWORD '{scheme.ExternalPassword}';";

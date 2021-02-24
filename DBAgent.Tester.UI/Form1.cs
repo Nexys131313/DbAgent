@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,24 +11,30 @@ using System.Windows.Forms;
 using DBAgent.Watcher;
 using DBAgent.Watcher.Enums;
 using DbAgent.Watcher.Helpers;
+using DbAgent.Watcher.Models;
 using DBAgent.Watcher.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DbAgent.Tester.UI
 {
     public partial class Form1 : Form
     {
-        private FbSqlWatcher _watcher;
+        private FbSqlWatcher<ProcessEventsActionModel> _watcher;
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private void OnAddSchemesButtonClick(object sender, EventArgs e)
         {
             try
             {
-                _watcher.EnsureAllTriggersExists();
+                var schemes = GetProcessEventsSchemes();
+                foreach (var scheme in schemes)
+                    _watcher.AddTrigger(scheme);
+
                 _watcher.InitializeListeners();
 
                 ((Button)(sender)).BackColor = Color.Green;
@@ -49,13 +56,12 @@ namespace DbAgent.Tester.UI
             var options = new FbSqlWatcherOptions()
             {
                 TriggersFilePath = "Triggers.json",
-                Tables = new List<TableType>() { TableType.ProcessEvents },
             };
 
-            _watcher = new FbSqlWatcher(options);
+            _watcher = new FbSqlWatcher<ProcessEventsActionModel>(options);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void OnRemoveTriggersButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -69,7 +75,7 @@ namespace DbAgent.Tester.UI
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void OnRandomInsertButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -82,7 +88,7 @@ namespace DbAgent.Tester.UI
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void OnCreateSchemeButtonClick(object sender, EventArgs e)
         {
             var scheme = new SqlTriggerScheme<ProcessEventsActionModel>
             {
@@ -92,13 +98,59 @@ namespace DbAgent.Tester.UI
                 ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
                 ExternalPassword = "masterkey",
                 ExternalUser = "SYSDBA",
-                TriggerName = "TRIGGER PE_RIGGER_INSERT",
+                TriggerName = "PE_RIGGER_INSERT",
                 ExternalTableName = "PROCESS_EVENTS_ACTIONS",
-                InsertDataModel = new ProcessEventsActionModel(),
             };
 
             var sql = SqlTriggerBuilder.BuildSqlTrigger(scheme);
             textBox1.Text = sql;
+        }
+
+
+        private IEnumerable<SqlTriggerScheme<ProcessEventsActionModel>> GetProcessEventsSchemes()
+        {
+            var schemes = new List<SqlTriggerScheme<ProcessEventsActionModel>>();
+
+            var insert = new SqlTriggerScheme<ProcessEventsActionModel>
+            {
+                TriggerType = TriggerType.Insert,
+                EventName = "PROCESS_EVENT_INSERT",
+                TableName = "PROCESS_EVENTS",
+                ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
+                ExternalPassword = "masterkey",
+                ExternalUser = "SYSDBA",
+                TriggerName = "PE_RIGGER_INSERT",
+                ExternalTableName = "PROCESS_EVENTS_ACTIONS",
+            };
+
+            var delete = new SqlTriggerScheme<ProcessEventsActionModel>
+            {
+                TriggerType = TriggerType.Delete,
+                EventName = "PROCESS_EVENT_DELETE",
+                TableName = "PROCESS_EVENTS",
+                ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
+                ExternalPassword = "masterkey",
+                ExternalUser = "SYSDBA",
+                TriggerName = "PE_RIGGER_DELETE",
+                ExternalTableName = "PROCESS_EVENTS_ACTIONS",
+            };
+
+            var update = new SqlTriggerScheme<ProcessEventsActionModel>
+            {
+                TriggerType = TriggerType.Update,
+                EventName = "PROCESS_EVENT_UPDATE",
+                TableName = "PROCESS_EVENTS",
+                ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
+                ExternalPassword = "masterkey",
+                ExternalUser = "SYSDBA",
+                TriggerName = "PE_RIGGER_UPDATE",
+                ExternalTableName = "PROCESS_EVENTS_ACTIONS",
+            };
+
+            schemes.Add(insert);
+            schemes.Add(delete);
+            schemes.Add(update);
+            return schemes;
         }
     }
 }

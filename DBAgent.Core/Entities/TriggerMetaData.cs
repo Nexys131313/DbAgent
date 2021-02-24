@@ -13,6 +13,5 @@ namespace DBAgent.Watcher.Entities
         public DateTime CreationTime { get; set; }
         public string EventName { get; set; }
         public TriggerType Type { get; set; }
-        public TableType TableType { get; set; }
     }
 }

@@ -117,23 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="MainDb_ConnectionString_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\maindb_connectionstring_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Process_Events_Delete_Trigger_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\process_events_delete_trigger_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Process_Events_Insert_Random_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\process_events_insert_random_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Process_Events_Insert_Trigger_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\process_events_insert_trigger_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Process_Events_Update_Trigger_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\process_events_update_trigger_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="TempDb_ConnectionString_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tempdb_connectionstring_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
 </root>

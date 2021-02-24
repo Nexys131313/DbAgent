@@ -121,15 +121,6 @@
   <data name="MainDb_ConnectionString_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\sqlcommands\maindb_connectionstring_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="Process_Events_Delete_Trigger_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\sqlcommands\processevents\process_events_delete_trigger_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Process_Events_Insert_Trigger_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\sqlcommands\processevents\process_events_insert_trigger_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Process_Events_Update_Trigger_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\sqlcommands\processevents\process_events_update_trigger_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="TempDb_ConnectionString_SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\sqlcommands\tempdb_connectionstring_sql.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

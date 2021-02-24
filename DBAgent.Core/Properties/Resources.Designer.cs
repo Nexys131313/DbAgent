@@ -83,63 +83,6 @@ namespace DbAgent.Watcher.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CREATE OR ALTER TRIGGER PE_TRIGGER_DELETE FOR PROCESS_EVENTS
-        ///ACTIVE AFTER DELETE POSITION 0
-        ///AS
-        /// DECLARE S VARCHAR(3000);
-        ///BEGIN
-        ///
-        ///
-        ///    S = &apos;INSERT INTO PROCESS_EVENTS_ACTIONS (
-        ///    ID, DONE, CATEGORY_ID, OBJECT_ID, SOUND_OFF_TIME, ELECTRICIAN, GZ_ID, ARRIVE_TIME, DESCRIPTION, DONE_TIMESTAMP,
-        ///    SOUND_OFF, ELECTRICIAN_ON, GZ_ON, ARRIVE_ON, REASON_ON, GZ_TIME, DESC_ON, USER_ID, WUSER_NAME, HOST_NAME, REASON_ID, GOBJECT_ID, DEPARTURE_GZ, IS_DELETE_ACTION
-        ///) values (:V1, :V2, :V3, :V4, :V5, :V6, :V7, :V [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Process_Events_Delete_Trigger_SQL {
-            get {
-                return ResourceManager.GetString("Process_Events_Delete_Trigger_SQL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CREATE OR ALTER TRIGGER PE_RIGGER_INSERT FOR PROCESS_EVENTS
-        ///ACTIVE AFTER INSERT POSITION 0
-        ///AS
-        /// DECLARE S VARCHAR(3000);
-        ///BEGIN
-        ///
-        ///
-        ///    S = &apos;INSERT INTO PROCESS_EVENTS_ACTIONS (
-        ///    ID, DONE, CATEGORY_ID, OBJECT_ID, SOUND_OFF_TIME, ELECTRICIAN, GZ_ID, ARRIVE_TIME, DESCRIPTION, DONE_TIMESTAMP,
-        ///    SOUND_OFF, ELECTRICIAN_ON, GZ_ON, ARRIVE_ON, REASON_ON, GZ_TIME, DESC_ON, USER_ID, WUSER_NAME, HOST_NAME, REASON_ID, GOBJECT_ID, DEPARTURE_GZ, IS_INSERT_ACTION
-        ///) values (:V1, :V2, :V3, :V4, :V5, :V6, :V7, :V8 [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Process_Events_Insert_Trigger_SQL {
-            get {
-                return ResourceManager.GetString("Process_Events_Insert_Trigger_SQL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CREATE OR ALTER TRIGGER PE_TRIGGER_UPDATE FOR PROCESS_EVENTS
-        ///ACTIVE AFTER UPDATE POSITION 0
-        ///AS
-        /// DECLARE S VARCHAR(3000);
-        ///BEGIN
-        ///
-        ///
-        ///    S = &apos;INSERT INTO PROCESS_EVENTS_ACTIONS (
-        ///    ID, DONE, CATEGORY_ID, OBJECT_ID, SOUND_OFF_TIME, ELECTRICIAN, GZ_ID, ARRIVE_TIME, DESCRIPTION, DONE_TIMESTAMP,
-        ///    SOUND_OFF, ELECTRICIAN_ON, GZ_ON, ARRIVE_ON, REASON_ON, GZ_TIME, DESC_ON, USER_ID, WUSER_NAME, HOST_NAME, REASON_ID, GOBJECT_ID, DEPARTURE_GZ, IS_UPDATE_ACTION
-        ///) values (:V1, :V2, :V3, :V4, :V5, :V6, :V7, :V [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Process_Events_Update_Trigger_SQL {
-            get {
-                return ResourceManager.GetString("Process_Events_Update_Trigger_SQL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to User=SYSDBA;
         ///Password=masterkey;
         ///Database=C:\DataBases\ACTIONSDB.FDB;

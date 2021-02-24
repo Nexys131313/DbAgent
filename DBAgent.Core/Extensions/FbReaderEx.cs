@@ -22,18 +22,6 @@ namespace DbAgent.Watcher.Extensions
             }
         }
 
-        public static string ValueStr(this object dbValue)
-        {
-            if (dbValue is DBNull)
-            {
-                return "";
-            }
-            else
-            {
-                return (string) dbValue;
-            }
-        }
-
         public static TModel ReadAsModel<TModel>(this IDataRecord reader)
             where TModel : IModel, new()
         {

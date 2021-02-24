@@ -99,18 +99,15 @@
   <ItemGroup>
     <Compile Include="Attributes\DbFieldAttribute.cs" />
     <Compile Include="Attributes\DbTableAttribute.cs" />
-    <Compile Include="Enums\TableType.cs" />
     <Compile Include="Enums\TriggerType.cs" />
-    <Compile Include="Events\Args\ProcessEventsTableChangedEventArgs.cs" />
-    <Compile Include="Events\Handlers\ProcessEventsChangedEventHandler.cs" />
-    <Compile Include="Extensions\FbCommandEx.cs" />
+    <Compile Include="Events\Args\TableChangedEventArgs.cs" />
+    <Compile Include="Events\Handlers\TableChangedEventHandler.cs" />
     <Compile Include="Extensions\FbReaderEx.cs" />
     <Compile Include="FbSqlWatcher.cs" />
     <Compile Include="FbSqlWatcherOptions.cs" />
     <Compile Include="Helpers\SqlTriggerBuilder.cs" />
     <Compile Include="Helpers\SqlTriggerScheme.cs" />
     <Compile Include="Helpers\WatcherResourceManager.cs" />
-    <Compile Include="Helpers\TriggerExtractor.cs" />
     <Compile Include="Helpers\TriggerTypeConverter.cs" />
     <Compile Include="Models\IModel.cs" />
     <Compile Include="Models\ProcessEventsActionModel.cs" />
@@ -137,11 +134,6 @@
   <ItemGroup>
     <Content Include="SqlCommands\TempDb_ConnectionString_SQL.txt" />
     <Content Include="SqlCommands\MainDb_ConnectionString_SQL.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="SqlCommands\ProcessEvents\Process_Events_Delete_Trigger_SQL.txt" />
-    <Content Include="SqlCommands\ProcessEvents\Process_Events_Update_Trigger_SQL.txt" />
-    <Content Include="SqlCommands\ProcessEvents\Process_Events_Insert_Trigger_SQL.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

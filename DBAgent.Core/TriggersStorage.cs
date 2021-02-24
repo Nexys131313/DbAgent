@@ -14,7 +14,7 @@ namespace DBAgent.Watcher
     public class TriggersStorage
     {
         [JsonProperty]
-        private List<TriggerMetaData> _triggers = new List<TriggerMetaData>();
+        private readonly List<TriggerMetaData> _triggers = new List<TriggerMetaData>();
 
         public TriggersStorage(string filePath, bool isAutoSave)
         {
@@ -60,43 +60,30 @@ namespace DBAgent.Watcher
             return storage;
         }
 
-        public TableType ToTable(string eventName)
-        {
-            var trigger = _triggers.FirstOrDefault(item => item.EventName == eventName);
-            if (trigger == null)
-                throw new Exception($"Can't find event: {eventName}");
-
-            return trigger.TableType;
-        }
-
         public bool IsContains(TriggerMetaData trigger)
         {
             var local = _triggers.FirstOrDefault(item => item.Id == trigger.Id);
             return local != null;
         }
 
-        public void AddTrigger(TriggerMetaData trigger)
+        public void AddTriggerIfNonExists(TriggerMetaData trigger)
         {
-            if (IsContains(trigger))
-                throw new Exception("Trigger already exists");
+            if (IsContains(trigger)) return;
 
             _triggers.Add(trigger);
-            Logger.LogDebug($"Trigger added to storage: {trigger.Name}");
 
             if (IsAutoSave)
                 Save();
         }
 
-        public void RemoveTrigger(TriggerMetaData trigger)
+        public void RemoveTriggerIfExists(TriggerMetaData trigger)
         {
-            if (IsContains(trigger) == false)
-                throw new Exception("Trigger not found");
+            if (!IsContains(trigger)) return;
 
             var local = _triggers.First(item => item.Id == trigger.Id);
             _triggers.Remove(local);
-            Logger.LogDebug($"Trigger removed from storage: {trigger.Name}");
 
-            if(IsAutoSave)
+            if (IsAutoSave)
                 Save();
         }
 
@@ -109,10 +96,10 @@ namespace DBAgent.Watcher
 
         public void AddTriggersFromFileSafe(string filePath)
         {
-            if(TryLoadFromFile(filePath, out var storage))
+            if (TryLoadFromFile(filePath, out var storage))
                 _triggers.AddRange(storage._triggers);
 
-            if(IsAutoSave)
+            if (IsAutoSave)
                 Save();
         }
     }
