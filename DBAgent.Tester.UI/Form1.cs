@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DBAgent.Watcher;
 using DBAgent.Watcher.Enums;
+using DbAgent.Watcher.Helpers;
+using DBAgent.Watcher.Models;
 
 namespace DbAgent.Tester.UI
 {
@@ -78,6 +80,25 @@ namespace DbAgent.Tester.UI
                 MessageBox.Show(ex.ToString());
             }
 
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var scheme = new SqlTriggerScheme<ProcessEventsActionModel>
+            {
+                TriggerType = TriggerType.Insert,
+                EventName = "PROCESS_EVENT_INSERT",
+                TableName = "PROCESS_EVENTS",
+                ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
+                ExternalPassword = "masterkey",
+                ExternalUser = "SYSDBA",
+                TriggerName = "TRIGGER PE_RIGGER_INSERT",
+                ExternalTableName = "PROCESS_EVENTS_ACTIONS",
+                InsertDataModel = new ProcessEventsActionModel(),
+            };
+
+            var sql = SqlTriggerBuilder.BuildSqlTrigger(scheme);
+            textBox1.Text = sql;
         }
     }
 }

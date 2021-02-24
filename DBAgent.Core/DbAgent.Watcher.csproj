@@ -97,6 +97,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\DbFieldAttribute.cs" />
+    <Compile Include="Attributes\DbTableAttribute.cs" />
     <Compile Include="Enums\TableType.cs" />
     <Compile Include="Enums\TriggerType.cs" />
     <Compile Include="Events\Args\ProcessEventsTableChangedEventArgs.cs" />
@@ -105,9 +107,12 @@
     <Compile Include="Extensions\FbReaderEx.cs" />
     <Compile Include="FbSqlWatcher.cs" />
     <Compile Include="FbSqlWatcherOptions.cs" />
+    <Compile Include="Helpers\SqlTriggerBuilder.cs" />
+    <Compile Include="Helpers\SqlTriggerScheme.cs" />
     <Compile Include="Helpers\WatcherResourceManager.cs" />
     <Compile Include="Helpers\TriggerExtractor.cs" />
     <Compile Include="Helpers\TriggerTypeConverter.cs" />
+    <Compile Include="Models\IModel.cs" />
     <Compile Include="Models\ProcessEventsActionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

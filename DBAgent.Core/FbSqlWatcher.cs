@@ -7,6 +7,7 @@ using DBAgent.Watcher.Events.Args;
 using DBAgent.Watcher.Events.Handlers;
 using DBAgent.Watcher.Extensions;
 using DBAgent.Watcher.Helpers;
+using DBAgent.Watcher.Models;
 using DBAgent.Watcher.Readers;
 using FirebirdSql.Data.FirebirdClient;
 using Melnik.Logging;
@@ -171,7 +172,7 @@ namespace DBAgent.Watcher
 
         private void OnProcessEventsChanged(string eventName)
         {
-            var models = _tempDbReader.ReadAllProcessEventsActionModels();
+            var models = _tempDbReader.ReadModels<ProcessEventsActionModel>();
             var args = new ProcessEventsChangedEventArgs { Models = models };
             ProcessEventsChanged?.Invoke(this, args);
         }
@@ -219,9 +220,9 @@ namespace DBAgent.Watcher
         {
             var fbEx = (FbException)ex;
 
-            // mean trigger already exists
-            if (fbEx.ErrorCode == 335544351)
-                return;
+            //// mean trigger already exists
+            //if (fbEx.ErrorCode == 335544351)
+            //    return;
 
             throw ex;
         }
