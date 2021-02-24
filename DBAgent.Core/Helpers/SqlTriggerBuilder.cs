@@ -128,7 +128,7 @@ namespace DbAgent.Watcher.Helpers
             where TModel : IModel,  new()
         {
             var triggerName = TriggerTypeConverter.ToName(scheme.TriggerType);
-            var sql = $"CREATE OR ALTER TRIGGER {scheme.TriggerName} FOR {scheme.TableName}{Environment.NewLine}";
+            var sql = $"CREATE OR ALTER TRIGGER {scheme.TriggerName} FOR {scheme.MainTableName}{Environment.NewLine}";
             sql += $"ACTIVE AFTER {triggerName} POSITION 0{Environment.NewLine}";
             sql += $"AS{Environment.NewLine}";
             sql += $"DECLARE S VARCHAR(3000);{Environment.NewLine}";

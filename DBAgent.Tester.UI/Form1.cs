@@ -20,7 +20,7 @@ namespace DbAgent.Tester.UI
 {
     public partial class Form1 : Form
     {
-        private FbSqlWatcher<ProcessEventsActionModel> _watcher;
+        private FbSqlWatcher<EmployeeActionModel> _watcher;
 
         public Form1()
         {
@@ -31,11 +31,20 @@ namespace DbAgent.Tester.UI
         {
             try
             {
-                var schemes = GetProcessEventsSchemes();
+
+                var options = new FbSqlWatcherOptions()
+                {
+                    TriggersFilePath = "Triggers.json",
+                };
+
+                _watcher = new FbSqlWatcher<EmployeeActionModel>(options);
+
+                var schemes = GetSchemes<EmployeeActionModel>();
                 foreach (var scheme in schemes)
                     _watcher.AddTrigger(scheme);
 
                 _watcher.InitializeListeners();
+                _watcher.TableChanged += _watcher_TableChanged;
 
                 ((Button)(sender)).BackColor = Color.Green;
             }
@@ -46,6 +55,12 @@ namespace DbAgent.Tester.UI
             }
         }
 
+        private void _watcher_TableChanged(object sender,
+            Watcher.Events.Args.TableChangedEventArgs<EmployeeActionModel> args)
+        {
+            var a = args.ChangedModels;
+        }
+
         private void ShowError(Exception ex)
         {
             MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -53,12 +68,7 @@ namespace DbAgent.Tester.UI
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var options = new FbSqlWatcherOptions()
-            {
-                TriggersFilePath = "Triggers.json",
-            };
-
-            _watcher = new FbSqlWatcher<ProcessEventsActionModel>(options);
+           
         }
 
         private void OnRemoveTriggersButtonClick(object sender, EventArgs e)
@@ -102,19 +112,20 @@ namespace DbAgent.Tester.UI
             textBox1.Text = sql;
         }
 
-        private IEnumerable<SqlTriggerScheme<ProcessEventsActionModel>> GetProcessEventsSchemes()
-        {
-            var schemes = SqlTriggerScheme<ProcessEventsActionModel>.
-                InitializeSchemes("PROCESS_EVENTS_ACTIONS",
-                @"C:\DataBases\ACTIONSDB.FDB",
-                "SYSDBA", "masterkey", new[]
-                {
-                    TriggerType.Insert,
-                    TriggerType.Delete,
-                    TriggerType.Update
-                });
 
-            
+        private IEnumerable<SqlTriggerScheme<TModel>> GetSchemes<TModel>()
+            where TModel: IModel, new()
+        {
+            var schemes = SqlTriggerScheme<TModel>.
+                InitializeSchemes(@"C:\DataBases\ACTIONSDB.FDB",
+                    "SYSDBA", "masterkey", new[]
+                    {
+                        TriggerType.Insert,
+                        TriggerType.Delete,
+                        TriggerType.Update
+                    });
+
+
             return schemes;
         }
     }

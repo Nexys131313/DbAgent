@@ -98,7 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\DbFieldAttribute.cs" />
-    <Compile Include="Attributes\DbTableNameAttribute.cs" />
+    <Compile Include="Attributes\TransferInfo.cs" />
     <Compile Include="Attributes\EventNameAttribute.cs" />
     <Compile Include="Attributes\TriggerNameAttribute.cs" />
     <Compile Include="Enums\TriggerType.cs" />
@@ -111,6 +111,7 @@
     <Compile Include="Helpers\SqlTriggerScheme.cs" />
     <Compile Include="Helpers\WatcherResourceManager.cs" />
     <Compile Include="Helpers\TriggerTypeConverter.cs" />
+    <Compile Include="Models\EmployeeActionModel.cs" />
     <Compile Include="Models\IModel.cs" />
     <Compile Include="Models\ProcessEventsActionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

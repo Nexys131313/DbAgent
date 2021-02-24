@@ -15,18 +15,21 @@ namespace DbAgent.Watcher.Helpers
             var eventsData = typeof(TModel).GetCustomAttributes<EventNameAttribute>();
             var triggersData = typeof(TModel).GetCustomAttributes<TriggerNameAttribute>();
 
-            var tableName = typeof(TModel).GetCustomAttribute<DbTableNameAttribute>().TableName;
+            var externalTableName = typeof(TModel).GetCustomAttribute<TransferInfo>().ActionsTableName;
+            var mainTableName = typeof(TModel).GetCustomAttribute<TransferInfo>().MainTableName;
+
             var eventName = eventsData.First(item => item.TriggerType == triggerType).EventName;
             var triggerName = triggersData.First(item => item.TriggerType == triggerType).TriggerName;
 
             TriggerType = triggerType;
-            TableName = tableName;
+            ExternalTableName = externalTableName;
             EventName = eventName;
             TriggerName = triggerName;
+            MainTableName = mainTableName;
         }
 
         public string TriggerName { get;  }
-        public string TableName { get;  }
+        public string MainTableName { get;  }
         public TriggerType TriggerType { get;  }
         public string EventName { get;  }
 
@@ -38,8 +41,8 @@ namespace DbAgent.Watcher.Helpers
         [JsonIgnore]
         public Type ModelType => typeof(TModel);
 
-        public static IEnumerable<SqlTriggerScheme<TModel>> InitializeSchemes(string externalTableName,
-            string externalDataSource, string externalUser, string externalPassword, IEnumerable<TriggerType> triggers)
+        public static IEnumerable<SqlTriggerScheme<TModel>> InitializeSchemes
+            (string externalDataSource, string externalUser, string externalPassword, IEnumerable<TriggerType> triggers)
         {
             var result = new List<SqlTriggerScheme<TModel>>();
 
@@ -47,7 +50,6 @@ namespace DbAgent.Watcher.Helpers
             {
                 var scheme = new SqlTriggerScheme<TModel>(trigger)
                 {
-                    ExternalTableName = externalTableName,
                     ExternalDataSource = externalDataSource,
                     ExternalPassword = externalPassword,
                     ExternalUser = externalUser,
