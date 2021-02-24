@@ -147,10 +147,13 @@ namespace DBAgent.Watcher
 
             foreach (var type in types)
             {
-                var attribute = type.GetCustomAttribute<DbTableAttribute>();
+                var attribute = type.GetCustomAttribute<DbTableNameAttribute>();
                 if (attribute == null) continue;
 
-                if (!attribute.EventNames.Contains(eventName)) continue;
+                var eventNameAttrs = type.GetCustomAttributes<EventNameAttribute>();
+                var eventNames = eventNameAttrs.Select(item => item.EventName);
+
+                if (!eventNames.Contains(eventName)) continue;
 
                 var instance = Activator.CreateInstance(type);
                 return (TModel)instance;

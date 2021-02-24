@@ -98,7 +98,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\DbFieldAttribute.cs" />
-    <Compile Include="Attributes\DbTableAttribute.cs" />
+    <Compile Include="Attributes\DbTableNameAttribute.cs" />
+    <Compile Include="Attributes\EventNameAttribute.cs" />
+    <Compile Include="Attributes\TriggerNameAttribute.cs" />
     <Compile Include="Enums\TriggerType.cs" />
     <Compile Include="Events\Args\TableChangedEventArgs.cs" />
     <Compile Include="Events\Handlers\TableChangedEventHandler.cs" />

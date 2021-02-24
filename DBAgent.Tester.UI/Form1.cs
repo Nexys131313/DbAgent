@@ -90,15 +90,11 @@ namespace DbAgent.Tester.UI
 
         private void OnCreateSchemeButtonClick(object sender, EventArgs e)
         {
-            var scheme = new SqlTriggerScheme<ProcessEventsActionModel>
+            var scheme = new SqlTriggerScheme<ProcessEventsActionModel>(TriggerType.Insert)
             {
-                TriggerType = TriggerType.Insert,
-                EventName = "PROCESS_EVENT_INSERT",
-                TableName = "PROCESS_EVENTS",
                 ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
                 ExternalPassword = "masterkey",
                 ExternalUser = "SYSDBA",
-                TriggerName = "PE_RIGGER_INSERT",
                 ExternalTableName = "PROCESS_EVENTS_ACTIONS",
             };
 
@@ -106,50 +102,19 @@ namespace DbAgent.Tester.UI
             textBox1.Text = sql;
         }
 
-
         private IEnumerable<SqlTriggerScheme<ProcessEventsActionModel>> GetProcessEventsSchemes()
         {
-            var schemes = new List<SqlTriggerScheme<ProcessEventsActionModel>>();
+            var schemes = SqlTriggerScheme<ProcessEventsActionModel>.
+                InitializeSchemes("PROCESS_EVENTS_ACTIONS",
+                @"C:\DataBases\ACTIONSDB.FDB",
+                "SYSDBA", "masterkey", new[]
+                {
+                    TriggerType.Insert,
+                    TriggerType.Delete,
+                    TriggerType.Update
+                });
 
-            var insert = new SqlTriggerScheme<ProcessEventsActionModel>
-            {
-                TriggerType = TriggerType.Insert,
-                EventName = "PROCESS_EVENT_INSERT",
-                TableName = "PROCESS_EVENTS",
-                ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
-                ExternalPassword = "masterkey",
-                ExternalUser = "SYSDBA",
-                TriggerName = "PE_RIGGER_INSERT",
-                ExternalTableName = "PROCESS_EVENTS_ACTIONS",
-            };
-
-            var delete = new SqlTriggerScheme<ProcessEventsActionModel>
-            {
-                TriggerType = TriggerType.Delete,
-                EventName = "PROCESS_EVENT_DELETE",
-                TableName = "PROCESS_EVENTS",
-                ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
-                ExternalPassword = "masterkey",
-                ExternalUser = "SYSDBA",
-                TriggerName = "PE_RIGGER_DELETE",
-                ExternalTableName = "PROCESS_EVENTS_ACTIONS",
-            };
-
-            var update = new SqlTriggerScheme<ProcessEventsActionModel>
-            {
-                TriggerType = TriggerType.Update,
-                EventName = "PROCESS_EVENT_UPDATE",
-                TableName = "PROCESS_EVENTS",
-                ExternalDataSource = @"C:\DataBases\ACTIONSDB.FDB",
-                ExternalPassword = "masterkey",
-                ExternalUser = "SYSDBA",
-                TriggerName = "PE_RIGGER_UPDATE",
-                ExternalTableName = "PROCESS_EVENTS_ACTIONS",
-            };
-
-            schemes.Add(insert);
-            schemes.Add(delete);
-            schemes.Add(update);
+            
             return schemes;
         }
     }

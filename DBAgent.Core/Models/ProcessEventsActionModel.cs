@@ -9,8 +9,13 @@ using DbAgent.Watcher.Models;
 namespace DBAgent.Watcher.Models
 {
     [Serializable]
-    [DbTable("PROCESS_EVENTS_ACTIONS", 
-        new[] { "PROCESS_EVENT_INSERT", "PROCESS_EVENT_UPDATE", "PROCESS_EVENT_DELETE" })]
+    [DbTableName("PROCESS_EVENTS_ACTIONS")]
+    [EventName(TriggerType.Insert, "PROCESS_EVENTS_INSERT")]
+    [EventName(TriggerType.Update, "PROCESS_EVENTS_UPDATE")]
+    [EventName(TriggerType.Delete, "PROCESS_EVENTS_DELETE")]
+    [TriggerName(TriggerType.Insert, "PE_RIGGER_INSERT")]
+    [TriggerName(TriggerType.Update, "PE_RIGGER_UPDATE")]
+    [TriggerName(TriggerType.Delete, "PE_RIGGER_DELETE")]
     public class ProcessEventsActionModel : IModel
     {
         public ProcessEventsActionModel() { }

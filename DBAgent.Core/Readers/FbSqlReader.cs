@@ -21,7 +21,7 @@ namespace DBAgent.Watcher.Readers
         public List<TModel> ReadModels<TModel>()
             where TModel: IModel, new()
         {
-            var tableName = typeof(TModel).GetCustomAttribute<DbTableAttribute>().TableName;
+            var tableName = typeof(TModel).GetCustomAttribute<DbTableNameAttribute>().TableName;
             var models = new List<TModel>();
 
             using (var connection = new FbConnection(ConnectionString))

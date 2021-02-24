@@ -8,15 +8,13 @@ using DBAgent.Watcher.Enums;
 namespace DbAgent.Watcher.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class DbTableAttribute: Attribute
+    public class DbTableNameAttribute: Attribute
     {
-        public DbTableAttribute(string tableName,  string[] eventNames)
+        public DbTableNameAttribute(string tableName)
         {
             TableName = tableName;
-            EventNames = eventNames.ToList();
         }
 
-        public List<string> EventNames { get; }
         public string TableName { get; }
     }
 }
