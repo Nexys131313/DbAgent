@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using DbAgent.Watcher.Attributes;
 using DbAgent.Watcher.Extensions;

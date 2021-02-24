@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Runtime.Serialization;
 using DbAgent.Watcher.Attributes;
 using DBAgent.Watcher.Enums;
 using DBAgent.Watcher.Helpers;

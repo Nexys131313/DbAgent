@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Reflection;
 using DbAgent.Watcher.Attributes;
 using DBAgent.Watcher.Entities;
-using DBAgent.Watcher.Enums;
 using DbAgent.Watcher.Events.Args;
 using DbAgent.Watcher.Events.Handlers;
 using DbAgent.Watcher.Helpers;

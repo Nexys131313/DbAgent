@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using DBAgent.Watcher.Enums;
 
 namespace DBAgent.Watcher
 {

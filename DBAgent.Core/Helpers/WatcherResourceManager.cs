@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using DBAgent.Watcher.Enums;
+﻿using System.IO;
 using DbAgent.Watcher.Properties;
 
 namespace DBAgent.Watcher.Helpers
