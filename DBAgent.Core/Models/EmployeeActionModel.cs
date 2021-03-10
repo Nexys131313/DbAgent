@@ -10,13 +10,13 @@ using DBAgent.Watcher.Enums;
 namespace DbAgent.Watcher.Models
 {
     [Serializable]
-    [TransferInfo("EMPLOYEE", "EMPLOYEE_ACTIONS")]
-    [EventName(TriggerType.Insert, "EMPLOYEE_INSERT")]
-    [EventName(TriggerType.Update, "EMPLOYEE_UPDATE")]
-    [EventName(TriggerType.Delete, "EMPLOYEE_DELETE")]
-    [TriggerName(TriggerType.Insert, "EMPLOYEE_TRIGGER_INSERT")]
-    [TriggerName(TriggerType.Update, "EMPLOYEE_TRIGGER_UPDATE")]
-    [TriggerName(TriggerType.Delete, "EMPLOYEE_TRIGGER_DELETE")]
+    [DbTransferInfo("EMPLOYEE", "EMPLOYEE_ACTIONS")]
+    [DbEvent(TriggerType.Insert, "EMPLOYEE_INSERT")]
+    [DbEvent(TriggerType.Update, "EMPLOYEE_UPDATE")]
+    [DbEvent(TriggerType.Delete, "EMPLOYEE_DELETE")]
+    [DbTrigger(TriggerType.Insert, "EMPLOYEE_TRIGGER_INSERT")]
+    [DbTrigger(TriggerType.Update, "EMPLOYEE_TRIGGER_UPDATE")]
+    [DbTrigger(TriggerType.Delete, "EMPLOYEE_TRIGGER_DELETE")]
     public class EmployeeActionModel : IModel
     {
         public EmployeeActionModel() { }

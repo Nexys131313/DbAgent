@@ -145,10 +145,10 @@ namespace DBAgent.Watcher
 
             foreach (var type in types)
             {
-                var attribute = type.GetCustomAttribute<TransferInfo>();
+                var attribute = type.GetCustomAttribute<DbTransferInfo>();
                 if (attribute == null) continue;
 
-                var eventNameAttrs = type.GetCustomAttributes<EventNameAttribute>();
+                var eventNameAttrs = type.GetCustomAttributes<DbEventAttribute>();
                 var eventNames = eventNameAttrs.Select(item => item.EventName);
 
                 if (!eventNames.Contains(eventName)) continue;

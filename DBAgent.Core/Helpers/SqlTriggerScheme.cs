@@ -12,11 +12,11 @@ namespace DbAgent.Watcher.Helpers
     {
         public SqlTriggerScheme(TriggerType triggerType)
         {
-            var eventsData = typeof(TModel).GetCustomAttributes<EventNameAttribute>();
-            var triggersData = typeof(TModel).GetCustomAttributes<TriggerNameAttribute>();
+            var eventsData = typeof(TModel).GetCustomAttributes<DbEventAttribute>();
+            var triggersData = typeof(TModel).GetCustomAttributes<DbTriggerAttribute>();
 
-            var externalTableName = typeof(TModel).GetCustomAttribute<TransferInfo>().ActionsTableName;
-            var mainTableName = typeof(TModel).GetCustomAttribute<TransferInfo>().MainTableName;
+            var externalTableName = typeof(TModel).GetCustomAttribute<DbTransferInfo>().ActionsTableName;
+            var mainTableName = typeof(TModel).GetCustomAttribute<DbTransferInfo>().MainTableName;
 
             var eventName = eventsData.First(item => item.TriggerType == triggerType).EventName;
             var triggerName = triggersData.First(item => item.TriggerType == triggerType).TriggerName;
@@ -41,8 +41,8 @@ namespace DbAgent.Watcher.Helpers
         [JsonIgnore]
         public Type ModelType => typeof(TModel);
 
-        public static IEnumerable<SqlTriggerScheme<TModel>> InitializeSchemes
-            (string externalDataSource, string externalUser, string externalPassword, IEnumerable<TriggerType> triggers)
+        public static IEnumerable<SqlTriggerScheme<TModel>> CreateSchemes(string externalDataSource,
+            string externalUser, string externalPassword, IEnumerable<TriggerType> triggers)
         {
             var result = new List<SqlTriggerScheme<TModel>>();
 

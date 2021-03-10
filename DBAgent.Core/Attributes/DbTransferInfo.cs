@@ -3,9 +3,9 @@
 namespace DbAgent.Watcher.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class TransferInfo: Attribute
+    public class DbTransferInfo: Attribute
     {
-        public TransferInfo(string mainTableName, string actionsTableName)
+        public DbTransferInfo(string mainTableName, string actionsTableName)
         {
             MainTableName = mainTableName;
             ActionsTableName = actionsTableName;

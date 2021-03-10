@@ -4,9 +4,9 @@ using DBAgent.Watcher.Enums;
 namespace DbAgent.Watcher.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class TriggerNameAttribute: Attribute
+    public class DbTriggerAttribute: Attribute
     {
-        public TriggerNameAttribute(TriggerType triggerType, string triggerName)
+        public DbTriggerAttribute(TriggerType triggerType, string triggerName)
         {
             TriggerType = triggerType;
             TriggerName = triggerName;
