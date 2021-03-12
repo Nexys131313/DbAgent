@@ -5,12 +5,12 @@ using DBAgent.Watcher.Enums;
 using DBAgent.Watcher.Helpers;
 using DbAgent.Watcher.Models;
 
-namespace DbAgent.Watcher.Helpers
+namespace DbAgent.Watcher.Scheme
 {
-    public class SqlTriggerBuilder
+    internal class DefaultSqlBuilder : ISqlBuilder
     {
-        public static string BuildSqlTrigger<TModel>(SqlTriggerScheme<TModel> scheme)
-            where TModel : IModel,  new()
+        public string BuildSqlTrigger<TModel>(SqlTriggerScheme<TModel> scheme)
+            where TModel : IModel, new()
         {
             var sql = GetOpenPart(scheme);
             sql += GetInsertQuery(scheme);
@@ -100,7 +100,7 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetTableFieldsSequence<TModel>(SqlTriggerScheme<TModel> scheme)
-            where TModel : IModel,  new()
+            where TModel : IModel, new()
         {
             var sequence = "(";
 
@@ -125,7 +125,7 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetOpenPart<TModel>(SqlTriggerScheme<TModel> scheme)
-            where TModel : IModel,  new()
+            where TModel : IModel, new()
         {
             var triggerName = TriggerTypeConverter.ToName(scheme.TriggerType);
             var sql = $"CREATE OR ALTER TRIGGER {scheme.TriggerName} FOR {scheme.MainTableName}{Environment.NewLine}";
@@ -137,7 +137,7 @@ namespace DbAgent.Watcher.Helpers
         }
 
         private static string GetClosePart<TModel>(SqlTriggerScheme<TModel> scheme)
-            where TModel : IModel,  new()
+            where TModel : IModel, new()
         {
             var sql = $"ON EXTERNAL DATA SOURCE '{scheme.ExternalDataSource}' ";
             sql += $"AS USER '{scheme.ExternalUser}' PASSWORD '{scheme.ExternalPassword}';";

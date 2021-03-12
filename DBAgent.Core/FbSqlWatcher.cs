@@ -2,55 +2,52 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using DbAgent.Watcher;
 using DbAgent.Watcher.Attributes;
 using DBAgent.Watcher.Entities;
 using DbAgent.Watcher.Events.Args;
 using DbAgent.Watcher.Events.Handlers;
-using DbAgent.Watcher.Helpers;
-using DBAgent.Watcher.Helpers;
 using DbAgent.Watcher.Models;
 using DBAgent.Watcher.Models;
 using DBAgent.Watcher.Readers;
+using DbAgent.Watcher.Scheme;
 using FirebirdSql.Data.FirebirdClient;
 using Melnik.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace DBAgent.Watcher
 {
-    public class FbSqlWatcher<TModel> : IDisposable where TModel : IModel, new()
+    internal class FbSqlWatcher<TModel> : IFbWatcher<TModel> where TModel : IModel, new()
     {
-        private readonly FbSqlWatcherOptions _options;
-        private readonly TriggersStorage _triggersStorage;
-        private readonly FbSqlReader _tempDbReader;
+        private FbSqlWatcherOptions _options;
+        private TriggersStorage _triggersStorage;
+        private FbSqlReader _tempDbReader;
         private FbRemoteEvent _remoteEvent;
 
-        public FbSqlWatcher(FbSqlWatcherOptions options)
+        public FbSqlWatcher(FbSqlWatcherOptions options, ISqlBuilder sqlBuilder)
         {
-            _options = options;
-            _triggersStorage = new TriggersStorage(options.TriggersFilePath, true);
-            _triggersStorage.AddTriggersFromFileSafe(_options.TriggersFilePath);
-            _tempDbReader = new FbSqlReader(WatcherResourceManager.TempDbConnectionStringSql);
-            Logger = new LoggerFactory().CreateLogger<FbSqlWatcher<ProcessEventsActionModel>>();
+            InitializeInternal(options);
+            SqlBuilder = sqlBuilder;
         }
 
-        public FbSqlWatcher(FbSqlWatcherOptions options, ILogger logger)
+        public FbSqlWatcher(FbSqlWatcherOptions options, ISqlBuilder sqlBuilder, ILogger logger)
         {
-            _options = options;
-            _triggersStorage = new TriggersStorage(options.TriggersFilePath, true);
-            _triggersStorage.AddTriggersFromFileSafe(_options.TriggersFilePath);
-            _tempDbReader = new FbSqlReader(WatcherResourceManager.TempDbConnectionStringSql);
+            InitializeInternal(options);
+            SqlBuilder = sqlBuilder;
             Logger = logger;
         }
 
-        public IEnumerable<TriggerMetaData> CurrentTriggers => _triggersStorage.Triggers;
-        public string ConnectionString => WatcherResourceManager.MainDbConnectionStringSql;
+        public IEnumerable<TriggerMetaData> CurrentTriggers => _triggersStorage.Triggers.ToArray();
+        public string ConnectionString => _options.MainDbConnectionString;
+
+        protected ISqlBuilder SqlBuilder { get; private set; }
         protected ILogger Logger { get; private set; }
 
         public event TableChangedEventHandler<TModel> TableChanged;
 
         public TriggerMetaData AddTrigger(SqlTriggerScheme<TModel> scheme)
         {
-            var sqlQuery = SqlTriggerBuilder.BuildSqlTrigger(scheme);
+            var sqlQuery = SqlBuilder.BuildSqlTrigger(scheme);
             ExecuteNonQuery(sqlQuery);
 
             var triggerMetaData = new TriggerMetaData
@@ -63,6 +60,11 @@ namespace DBAgent.Watcher
 
             _triggersStorage.AddTriggerIfNonExists(triggerMetaData);
             return triggerMetaData;
+        }
+
+        public IEnumerable<TriggerMetaData> AddTriggers(IEnumerable<SqlTriggerScheme<TModel>> schemes)
+        {
+            return schemes.Select(AddTrigger).ToList();
         }
 
         public void EnsureAllTriggersRemoved()
@@ -92,19 +94,7 @@ namespace DBAgent.Watcher
             }
         }
 
-        //todo remove, for test only
-        public void InsertRandomToProcessEvents()
-        {
-            using (Logger.BeginScope(LoggerHelper.GetCaller()))
-            {
-                var rnd = new Random();
-                var id = rnd.Next(1, 1000000);
-                var cmdQuery = $"INSERT INTO PROCESS_EVENTS (ID) VALUES ({id});";
-                ExecuteNonQuery(cmdQuery);
-            }
-        }
-
-        public void InitializeListeners()
+        public void StartListening()
         {
             using (Logger.BeginScope(LoggerHelper.GetCaller()))
             {
@@ -117,6 +107,15 @@ namespace DBAgent.Watcher
                 _remoteEvent.QueueEvents(events.ToArray());
                 _remoteEvent.RemoteEventCounts += OnDbEvent;
             }
+        }
+
+        private void InitializeInternal(FbSqlWatcherOptions options)
+        {
+            _options = options;
+            _triggersStorage = new TriggersStorage(options.TriggersFilePath, true);
+            _triggersStorage.AddTriggersFromFileSafe(_options.TriggersFilePath);
+            _tempDbReader = new FbSqlReader(options.TempDbConnectionString);
+            Logger = new LoggerFactory().CreateLogger<FbSqlWatcher<ProcessEventsActionModel>>();
         }
 
         private void OnDbEvent(object sender, FbRemoteEventCountsEventArgs eventArgs)
@@ -133,7 +132,7 @@ namespace DBAgent.Watcher
             var models = _tempDbReader.ReadModels<TModel>();
             var args = new TableChangedEventArgs<TModel>()
             {
-                ChangedModels = models
+                TotalChangedModels = models
             };
 
             TableChanged?.Invoke(this, args);
@@ -190,6 +189,7 @@ namespace DBAgent.Watcher
         public void Dispose()
         {
             _remoteEvent?.Dispose();
+            EnsureAllTriggersRemoved();
         }
     }
 }

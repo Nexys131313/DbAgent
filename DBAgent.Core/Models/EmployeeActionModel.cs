@@ -26,6 +26,9 @@ namespace DbAgent.Watcher.Models
         [DbProperty("PHONE_MOBILE")] public string PhoneMobile { get; set; }
         [DbProperty("APPOINTMENT")] public int Appointment { get; set; }
 
+        [DbProperty("UPDATE_ID", true)]
+        public int UpdateId { get; }
+
         [DbProperty("CREATION_TIME", true)]
         public DateTime CreationTime { get; set; }
 
@@ -39,9 +42,17 @@ namespace DbAgent.Watcher.Models
         public int IsInsertAction { get; set; }
 
 
+
         public string GetDbProperty(string modelPropertyName)
         {
             return GetAttribute(modelPropertyName).PropertyName;
+        }
+
+        public string GetTempTableName()
+        {
+            var attribute = (DbTransferInfo)GetType().GetCustomAttribute(typeof(DbTransferInfo));
+            var tempTable = attribute.ActionsTableName;
+            return tempTable;
         }
 
         public DbPropertyAttribute GetAttribute(string propertyName)

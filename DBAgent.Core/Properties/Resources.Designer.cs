@@ -59,49 +59,5 @@ namespace DbAgent.Watcher.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User=SYSDBA;
-        ///Password=masterkey;
-        ///Database=C:\DataBases\TempDB.FDB;
-        ///DataSource=localhost;
-        ///Port=3050;
-        ///Dialect=3;
-        ///Charset=NONE;
-        ///Role=;
-        ///Connection lifetime=15;
-        ///Pooling=true;
-        ///MinPoolSize=0;
-        ///MaxPoolSize=50;
-        ///Packet Size=8192;
-        ///ServerType=0;.
-        /// </summary>
-        internal static string MainDb_ConnectionString_SQL {
-            get {
-                return ResourceManager.GetString("MainDb_ConnectionString_SQL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User=SYSDBA;
-        ///Password=masterkey;
-        ///Database=C:\DataBases\ACTIONSDB.FDB;
-        ///DataSource=localhost;
-        ///Port=3050;
-        ///Dialect=3;
-        ///Charset=NONE;
-        ///Role=;
-        ///Connection lifetime=15;
-        ///Pooling=true;
-        ///MinPoolSize=0;
-        ///MaxPoolSize=50;
-        ///Packet Size=8192;
-        ///ServerType=0;.
-        /// </summary>
-        internal static string TempDb_ConnectionString_SQL {
-            get {
-                return ResourceManager.GetString("TempDb_ConnectionString_SQL", resourceCulture);
-            }
-        }
     }
 }

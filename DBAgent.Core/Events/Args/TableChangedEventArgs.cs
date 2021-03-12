@@ -8,6 +8,6 @@ namespace DbAgent.Watcher.Events.Args
     public class TableChangedEventArgs<TModel>
         where TModel: IModel, new()
     {
-        public List<TModel> ChangedModels { get; set; } = new List<TModel>();
+        public List<TModel> TotalChangedModels { get; set; } = new List<TModel>();
     }
 }

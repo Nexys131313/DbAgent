@@ -28,7 +28,7 @@ namespace DbAgent.Watcher.Attributes
         }
 
         public string PropertyName { get; set; }
-        public bool OnlyTempDbField { get; set; } = false;
+        public bool OnlyTempDbField { get; set; }
         public TriggerType? TriggerProperty { get; set; }
     }
 }

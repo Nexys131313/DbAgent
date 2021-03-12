@@ -4,58 +4,75 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using DbAgent.Service.Architecture;
+using DbAgent.Redis;
+using DbAgent.Service.Events.Args;
+using DbAgent.Service.Events.Handlers;
+using DbAgent.Service.FireBird;
+using DbAgent.Watcher;
+using DBAgent.Watcher;
+using DbAgent.Watcher.Models;
 using Melnik.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace DbAgent.Service
 {
-    public class DbAgentService
+    public class DbAgentService<TModel>: IDisposable where TModel: IModel, new()
     {
-        private static DbAgentService _main;
-        public static DbAgentService Main => _main ?? (_main = new DbAgentService());
+        private readonly IFbWatcher<TModel> _watcher;
+        private readonly IRedisClient<TModel> _redisClient;
+        private readonly IFbSqlExecuter _fbSqlExecuter;
 
-        private AppConfig _config;
-
-        public DbAgentService()
+        public DbAgentService(IFbWatcher<TModel> watcher, IRedisClient<TModel> redisClient,
+            ILogger logger, IFbSqlExecuter sqlExecuter)
         {
-            Logger = LogSettings.LoggerFactory.CreateLogger<DbAgentService>();
+            _watcher = watcher;
+            _redisClient = redisClient;
+            _fbSqlExecuter = sqlExecuter;
+            Logger = logger;
+            _watcher.TableChanged += OnTableChanged;
         }
 
         protected ILogger Logger { get; }
 
-        public async Task InitializeAsync()
+        public ModelsUpdatedEventHandler<TModel> ModelsSentToRedis;
+
+        private void OnTableChanged(object sender, Watcher.Events.Args.TableChangedEventArgs<TModel> args)
         {
-            using (Logger.BeginScope(LoggerHelper.GetCaller()))
+            var totalModels = args.TotalChangedModels;
+            var sent = new List<TModel>();
+
+            foreach (var model in totalModels)
             {
-                InitializeAppConfig();
+                if(!_redisClient.TrySendModel(model)) continue;
+                Logger.LogDebug($"Model sent to redis");
+                sent.Add(model);
+
+                var tempTable = model.GetTempTableName();
+                var idProperty = model.GetDbProperty(nameof(model.UpdateId));
+
+                var command = $"DELETE FROM {tempTable} WHERE {idProperty} = {model.UpdateId}";
+                _fbSqlExecuter.ExecuteNonQuery(command, (ex) =>
+                {
+                    Logger.LogWarning(ex.ToString());
+                });
+
             }
+
+            ModelsSentToRedis?.Invoke(this, new ModelsUpdatedEventArgs<TModel>()
+            {
+                Models = sent,
+            });
         }
 
-        public async Task WorkingAsync()
+        public void Start()
         {
-
+            _watcher.StartListening();
+            Logger.LogDebug("Started");
         }
 
-        private void InitializeAppConfig()
+        public void Dispose()
         {
-            using (Logger.BeginScope(LoggerHelper.GetCaller()))
-            {
-                var configPath = AppSettings.AppConfigPath;
-
-                try
-                {
-                    _config = AppConfig.FromFile(AppSettings.AppConfigPath);
-                    Logger.LogDebug($"{configPath} loaded");
-                }
-                catch
-                {
-                    var defaultConfig = AppConfig.GetDefault(AppSettings.DefaultAppConfigPath);
-                    defaultConfig.Save();
-                    Logger.LogError($"Can't load {configPath}, default config created");
-                    throw;
-                }
-            }
+            _watcher.Dispose();
         }
     }
 }

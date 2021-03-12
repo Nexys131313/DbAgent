@@ -43,6 +43,9 @@ namespace DBAgent.Watcher.Models
         [DbProperty("DEPARTURE_GZ")] public int? DepartureGz { get; set; }
 
 
+        [DbProperty("UPDATE_ID", true)]
+        public int UpdateId { get; }
+
         [DbProperty("CREATION_TIME", true)]
         public DateTime? CreationTime { get; set; }
 
@@ -53,9 +56,17 @@ namespace DBAgent.Watcher.Models
         [DbProperty("IS_INSERT_ACTION", true, TriggerType.Insert)]
         public int? IsInsertAction { get; set; }
 
+
+
         public string GetDbProperty(string modelPropertyName)
         {
             return GetAttribute(modelPropertyName).PropertyName;
+        }
+
+        public string GetTempTableName()
+        {
+            var attribute = GetType().GetCustomAttribute<DbTransferInfo>();
+            return attribute.ActionsTableName;
         }
 
         public DbPropertyAttribute GetAttribute(string propertyName)

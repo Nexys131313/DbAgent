@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace DBAgent.Watcher
 {
-    public class TriggersStorage
+    internal class TriggersStorage
     {
         [JsonProperty]
         private readonly List<TriggerMetaData> _triggers = new List<TriggerMetaData>();

@@ -4,7 +4,7 @@ using DbAgent.Watcher.Models;
 
 namespace DbAgent.Watcher.Extensions
 {
-    public static class FbReaderEx
+    internal static class FbReaderEx
     {
         public static T? Value<T>(this object dbValue) where T: struct
         {

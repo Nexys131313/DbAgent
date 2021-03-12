@@ -6,11 +6,11 @@ using DbAgent.Watcher.Attributes;
 using DBAgent.Watcher.Enums;
 using Newtonsoft.Json;
 
-namespace DbAgent.Watcher.Helpers
+namespace DbAgent.Watcher.Scheme
 {
     public class SqlTriggerScheme<TModel> 
     {
-        public SqlTriggerScheme(TriggerType triggerType)
+        private SqlTriggerScheme(TriggerType triggerType)
         {
             var eventsData = typeof(TModel).GetCustomAttributes<DbEventAttribute>();
             var triggersData = typeof(TModel).GetCustomAttributes<DbTriggerAttribute>();
@@ -32,8 +32,8 @@ namespace DbAgent.Watcher.Helpers
         public string MainTableName { get;  }
         public TriggerType TriggerType { get;  }
         public string EventName { get;  }
+        public string ExternalTableName { get;  }
 
-        public string ExternalTableName { get; set; }
         public string ExternalDataSource { get; set; }
         public string ExternalUser { get; set; }
         public string ExternalPassword { get; set; }
@@ -41,23 +41,24 @@ namespace DbAgent.Watcher.Helpers
         [JsonIgnore]
         public Type ModelType => typeof(TModel);
 
-        public static IEnumerable<SqlTriggerScheme<TModel>> CreateSchemes(string externalDataSource,
+
+        internal static SqlTriggerScheme<TModel> CreateScheme(string externalDataSource,
+            string externalUser, string externalPassword, TriggerType trigger)
+        {
+            var scheme = new SqlTriggerScheme<TModel>(trigger)
+            {
+                ExternalDataSource = externalDataSource,
+                ExternalPassword = externalPassword,
+                ExternalUser = externalUser,
+            };
+
+            return scheme;
+        }
+
+        internal static IEnumerable<SqlTriggerScheme<TModel>> CreateSchemes(string externalDataSource,
             string externalUser, string externalPassword, IEnumerable<TriggerType> triggers)
         {
-            var result = new List<SqlTriggerScheme<TModel>>();
-
-            foreach (var trigger in triggers)
-            {
-                var scheme = new SqlTriggerScheme<TModel>(trigger)
-                {
-                    ExternalDataSource = externalDataSource,
-                    ExternalPassword = externalPassword,
-                    ExternalUser = externalUser,
-                };
-                result.Add(scheme);
-            }
-
-            return result;
+            return triggers.Select(trigger => CreateScheme(externalDataSource, externalUser, externalPassword, trigger)).ToList();
         }
     }
 }
