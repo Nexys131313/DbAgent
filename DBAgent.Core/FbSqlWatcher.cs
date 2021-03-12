@@ -19,8 +19,8 @@ namespace DBAgent.Watcher
 {
     internal class FbSqlWatcher<TModel> : IFbWatcher<TModel> where TModel : IModel, new()
     {
+        private readonly List<TriggerMetaData> _triggers = new List<TriggerMetaData>();
         private FbSqlWatcherOptions _options;
-        private TriggersStorage _triggersStorage;
         private FbSqlReader _tempDbReader;
         private FbRemoteEvent _remoteEvent;
 
@@ -37,7 +37,7 @@ namespace DBAgent.Watcher
             Logger = logger;
         }
 
-        public IEnumerable<TriggerMetaData> CurrentTriggers => _triggersStorage.Triggers.ToArray();
+        public IEnumerable<TriggerMetaData> CurrentTriggers => _triggers.ToArray();
         public string ConnectionString => _options.MainDbConnectionString;
 
         protected ISqlBuilder SqlBuilder { get; private set; }
@@ -58,7 +58,11 @@ namespace DBAgent.Watcher
                 Type = scheme.TriggerType
             };
 
-            _triggersStorage.AddTriggerIfNonExists(triggerMetaData);
+            var local = _triggers.FirstOrDefault(item => item.Id == triggerMetaData.Id);
+            if (local != null)
+                throw new Exception($"Trigger with Id: {local.Id} is already exists");
+
+            _triggers.Add(triggerMetaData);
             return triggerMetaData;
         }
 
@@ -89,8 +93,6 @@ namespace DBAgent.Watcher
                         throw ex;
 
                 });
-
-                _triggersStorage.RemoveTriggerIfExists(trigger);
             }
         }
 
@@ -102,18 +104,18 @@ namespace DBAgent.Watcher
 
                 _remoteEvent = new FbRemoteEvent(ConnectionString);
 
-                var triggers = _triggersStorage.Triggers;
-                var events = triggers.Select(item => item.EventName);
+                var events = _triggers.Select(item => item.EventName).ToList();
                 _remoteEvent.QueueEvents(events.ToArray());
                 _remoteEvent.RemoteEventCounts += OnDbEvent;
+
+                var eventsStr = events.Aggregate("", (current, item) => current + $"{item} ");
+                Logger.LogDebug($"Listening events: {eventsStr}");
             }
         }
 
         private void InitializeInternal(FbSqlWatcherOptions options)
         {
             _options = options;
-            _triggersStorage = new TriggersStorage(options.TriggersFilePath, true);
-            _triggersStorage.AddTriggersFromFileSafe(_options.TriggersFilePath);
             _tempDbReader = new FbSqlReader(options.TempDbConnectionString);
             Logger = new LoggerFactory().CreateLogger<FbSqlWatcher<ProcessEventsActionModel>>();
         }

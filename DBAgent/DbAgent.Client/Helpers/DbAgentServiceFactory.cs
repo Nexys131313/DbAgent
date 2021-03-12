@@ -57,7 +57,7 @@ namespace DbAgent.Client.Helpers
             var triggersFilePath = Path.Combine(AppSettings.DataDirectoryPath, triggersFileName);
 
             var options = new FbSqlWatcherOptions(GetMainDbConnectionString(),
-                GetTempDbConnectionString(), triggersFilePath);
+                GetTempDbConnectionString());
 
             var factory = CreateWatcherFactory<TModel>();
             var watcher = factory.CreateWatcher(options);
@@ -68,7 +68,7 @@ namespace DbAgent.Client.Helpers
             watcher.AddTriggers(schemeFactory.CreateSchemes(TriggerType.Insert,
                 TriggerType.Delete, TriggerType.Update));
 
-            return factory.CreateWatcher(options);
+            return watcher;
         }
 
         private static IWatcherFactory<TModel> CreateWatcherFactory<TModel>()

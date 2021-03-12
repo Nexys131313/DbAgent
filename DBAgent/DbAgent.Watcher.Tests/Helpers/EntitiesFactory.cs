@@ -7,12 +7,12 @@ namespace DbAgent.Watcher.Tests.Helpers
 {
     internal class EntitiesFactory
     {
-        public IFbWatcher<TModel> CreateWatcher<TModel>(string triggersFilePath)
+        public IFbWatcher<TModel> CreateWatcher<TModel>()
             where TModel : IModel, new()
         {
             var factory = new WatcherFactory<TModel>();
             var watcherOptions = new FbSqlWatcherOptions(AppContext.MainDbConnectionString,
-                AppContext.TempDbConnectionString, triggersFilePath);
+                AppContext.TempDbConnectionString);
             return factory.CreateWatcher(watcherOptions);
 
         }

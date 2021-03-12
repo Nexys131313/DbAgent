@@ -17,10 +17,10 @@ namespace DbAgent.Watcher.Tests.Helpers
         private readonly ISchemeFactory<TModel> _schemeFactory;
         private readonly EntitiesFactory _entitiesFactory;
 
-        public ModelTestEngine(string triggersFilePath)
+        public ModelTestEngine()
         {
             _entitiesFactory = new EntitiesFactory();
-            _watcher = _entitiesFactory.CreateWatcher<TModel>(triggersFilePath);
+            _watcher = _entitiesFactory.CreateWatcher<TModel>();
             _watcher.EnsureAllTriggersRemoved();
             _schemeFactory = _entitiesFactory.CreateSchemeFactory<TModel>();
 

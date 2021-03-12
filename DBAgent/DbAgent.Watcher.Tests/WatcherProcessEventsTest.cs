@@ -16,9 +16,7 @@ namespace DbAgent.Watcher.Tests
             var processEventsId = rnd.Next(1, 1000000);
             var cmd = $"INSERT INTO PROCESS_EVENTS (ID) VALUES ({processEventsId});";
 
-            var triggersFilePath = "Process_Events_Triggers.json";
-
-            using (var testEngine = new ModelTestEngine<ProcessEventsActionModel>(triggersFilePath))
+            using (var testEngine = new ModelTestEngine<ProcessEventsActionModel>())
             {
                await testEngine.CaptureModel(cmd, (model) => model.Id == processEventsId);
             }

@@ -27,7 +27,7 @@ namespace DbAgent.Watcher.Models
         [DbProperty("APPOINTMENT")] public int Appointment { get; set; }
 
         [DbProperty("UPDATE_ID", true)]
-        public int UpdateId { get; }
+        public int UpdateId { get; set; }
 
         [DbProperty("CREATION_TIME", true)]
         public DateTime CreationTime { get; set; }

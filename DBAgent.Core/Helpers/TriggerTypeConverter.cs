@@ -4,7 +4,7 @@ using DBAgent.Watcher.Enums;
 
 namespace DBAgent.Watcher.Helpers
 {
-    public static class TriggerTypeConverter
+    internal static class TriggerTypeConverter
     {
         private static readonly Dictionary<TriggerType, string> Type2Name 
             = new Dictionary<TriggerType, string>()

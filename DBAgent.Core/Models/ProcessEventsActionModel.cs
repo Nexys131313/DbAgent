@@ -44,7 +44,7 @@ namespace DBAgent.Watcher.Models
 
 
         [DbProperty("UPDATE_ID", true)]
-        public int UpdateId { get; }
+        public int UpdateId { get; set; }
 
         [DbProperty("CREATION_TIME", true)]
         public DateTime? CreationTime { get; set; }

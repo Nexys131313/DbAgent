@@ -6,6 +6,6 @@ namespace DbAgent.Service.FireBird
     {
         void ExecuteNonQuery(string command);
 
-        void ExecuteNonQuery(string cmdQuery, Action<Exception> onError);
+        bool ExecuteNonQuery(string cmdQuery, Action<Exception> onError);
     }
 }

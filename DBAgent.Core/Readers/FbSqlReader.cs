@@ -7,7 +7,7 @@ using FirebirdSql.Data.FirebirdClient;
 
 namespace DBAgent.Watcher.Readers
 {
-    public class FbSqlReader
+    internal class FbSqlReader
     {
         public FbSqlReader(string connectionString)
         {

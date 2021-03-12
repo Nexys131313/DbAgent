@@ -43,19 +43,26 @@ namespace DbAgent.Service
 
             foreach (var model in totalModels)
             {
-                if(!_redisClient.TrySendModel(model)) continue;
-                Logger.LogDebug($"Model sent to redis");
+                if (!_redisClient.TrySendModel(model))
+                {
+                    Logger.LogWarning($"Can't sent model: UPDATE_ID: {model.UpdateId}");
+                    continue;
+                }
+
+                Logger.LogDebug($"Model with UPDATE_ID: {model.UpdateId} sent to redis");
                 sent.Add(model);
 
                 var tempTable = model.GetTempTableName();
                 var idProperty = model.GetDbProperty(nameof(model.UpdateId));
 
                 var command = $"DELETE FROM {tempTable} WHERE {idProperty} = {model.UpdateId}";
-                _fbSqlExecuter.ExecuteNonQuery(command, (ex) =>
+                var isOk = _fbSqlExecuter.ExecuteNonQuery(command, (ex) =>
                 {
                     Logger.LogWarning(ex.ToString());
                 });
 
+                if(isOk)
+                    Logger.LogDebug($"Model with UPDATE_ID: {model.UpdateId} deleted from {tempTable}");
             }
 
             ModelsSentToRedis?.Invoke(this, new ModelsUpdatedEventArgs<TModel>()

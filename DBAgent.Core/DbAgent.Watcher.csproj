@@ -132,7 +132,6 @@
     <Compile Include="Entities\TriggerMetaData.cs" />
     <Compile Include="Readers\FbSqlReader.cs" />
     <Compile Include="Scheme\ISqlBuilder.cs" />
-    <Compile Include="TriggersStorage.cs" />
     <Compile Include="WatcherFactory.cs" />
   </ItemGroup>
   <ItemGroup>

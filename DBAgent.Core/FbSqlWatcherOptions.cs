@@ -6,15 +6,13 @@ namespace DBAgent.Watcher
     public class FbSqlWatcherOptions
     {
         public FbSqlWatcherOptions(string mainDbConnectionStr,
-            string tempDbConnectionStr, string triggersFilePath)
+            string tempDbConnectionStr)
         {
             MainDbConnectionString = mainDbConnectionStr;
             TempDbConnectionString = tempDbConnectionStr;
-            TriggersFilePath = triggersFilePath;
         }
 
         public string MainDbConnectionString { get; set; }
         public string TempDbConnectionString { get; set; }
-        public string TriggersFilePath { get; set; } 
     }
 }

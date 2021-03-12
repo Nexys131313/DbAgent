@@ -27,15 +27,17 @@ namespace DbAgent.Service.FireBird
             }
         }
 
-        public void ExecuteNonQuery(string cmdQuery, Action<Exception> onError)
+        public bool ExecuteNonQuery(string cmdQuery, Action<Exception> onError)
         {
             try
             {
                 ExecuteNonQuery(cmdQuery);
+                return true;
             }
             catch (Exception ex)
             {
                 onError.Invoke(ex);
+                return false;
             }
         }
     }
