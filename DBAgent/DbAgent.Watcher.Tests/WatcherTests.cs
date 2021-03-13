@@ -7,10 +7,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace DbAgent.Watcher.Tests
 {
     [TestClass]
-    public class WatcherProcessEventsTest
+    public class WatcherTests
     {
         [TestMethod]
-        public async Task TestUpdateCapture()
+        public async Task ProcessEventsInsertCaptureTest()
         {
             var rnd = new Random();
             var processEventsId = rnd.Next(1, 1000000);

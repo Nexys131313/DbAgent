@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using DbAgent.Watcher.Models;
 
-namespace DbAgent.Watcher.Tests.Helpers
+namespace DbAgent.Tests.Core
 {
     public class ModelsCache<TModel> where TModel : IModel, new()
     {

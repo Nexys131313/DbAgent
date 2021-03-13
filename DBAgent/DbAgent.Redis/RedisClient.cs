@@ -27,7 +27,7 @@ namespace DbAgent.Redis
             return connection.Value;
         }
 
-        public bool TrySendModel(TModel model)
+        public bool TrySendModel(TModel model, out Exception ex)
         {
             try
             {
@@ -41,11 +41,13 @@ namespace DbAgent.Redis
                     db.ListRightPush(key, value);
                 }
 
-                EnsureItemExists(key, value);
+                //EnsureItemExists(key, value);
+                ex = null;
                 return true;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
+                ex = exc;
                 return false;
             }
         }
@@ -55,7 +57,7 @@ namespace DbAgent.Redis
             using (var connection = OpenConnection())
             {
                 var db = connection.GetDatabase();
-                var values = db.ListRange(key, -1, 10).
+                var values = db.ListRange(key, -1, -10).
                     Select(item=> item.ToString());
 
                 if(values.Contains(value)) return;

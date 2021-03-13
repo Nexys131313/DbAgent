@@ -34,7 +34,7 @@ namespace DbAgent.Service
 
         protected ILogger Logger { get; }
 
-        public ModelsUpdatedEventHandler<TModel> ModelsSentToRedis;
+        public event ModelsUpdatedEventHandler<TModel> ModelsSentToRedis;
 
         private void OnTableChanged(object sender, Watcher.Events.Args.TableChangedEventArgs<TModel> args)
         {
@@ -43,9 +43,10 @@ namespace DbAgent.Service
 
             foreach (var model in totalModels)
             {
-                if (!_redisClient.TrySendModel(model))
+                if (!_redisClient.TrySendModel(model, out var exception))
                 {
                     Logger.LogWarning($"Can't sent model: UPDATE_ID: {model.UpdateId}");
+                    Logger.LogWarning(exception.ToString());
                     continue;
                 }
 

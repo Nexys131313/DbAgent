@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
-using System.Text;
-using DbAgent.Client.Common;
 using DbAgent.Redis;
-using DbAgent.Service;
 using DbAgent.Service.FireBird;
+using DbAgent.Tests.Core;
 using DbAgent.Watcher;
 using DBAgent.Watcher;
 using DbAgent.Watcher.Attributes;
@@ -14,8 +10,9 @@ using DBAgent.Watcher.Enums;
 using DbAgent.Watcher.Models;
 using DbAgent.Watcher.Scheme;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
-namespace DbAgent.Client.Helpers
+namespace DbAgent.Service.Tests.Helpers
 {
     internal class DbAgentServiceFactory
     {
@@ -26,7 +23,7 @@ namespace DbAgent.Client.Helpers
             var watcher = CreateWatcher<TModel>();
             var redis = CreateRedisClient<TModel>();
             var sqlExecuter = CreateSqlExecuter();
-            var logger = LogSettings.LoggerFactory.CreateLogger<DbAgentService<TModel>>();
+            var logger = new NullLoggerFactory().CreateLogger<DbAgentService<TModel>>();
 
             var service = new DbAgentService<TModel>(watcher, redis, logger, sqlExecuter);
             return service;
@@ -34,14 +31,16 @@ namespace DbAgent.Client.Helpers
 
         private static IFbSqlExecuter CreateSqlExecuter()
         {
-            return new FbSqlExecuter(GetTempDbConnectionString());
+            return new FbSqlExecuter(TestsContext.TempDbConnectionString);
         }
 
         private static IRedisClient<TModel> CreateRedisClient<TModel>()
             where TModel : IModel, new()
         {
-            var factory = new RedisClientFactory<TModel>(AppConfig.Main.RedisConnectionString,
-                AppConfig.Main.MainDbId);
+            var redisConnectionString = TestsContext.RedisConnectionString;
+            var mainDbId = TestsContext.MainDbId;
+
+            var factory = new RedisClientFactory<TModel>(redisConnectionString, mainDbId);
 
             return factory.CreateRedisClient();
         }
@@ -53,17 +52,14 @@ namespace DbAgent.Client.Helpers
             if (string.IsNullOrWhiteSpace(tableName))
                 throw new Exception($"Can't extract table name from: {typeof(TModel)}");
 
-            var triggersFileName = $"{tableName}_TRIGGERS.json";
-            var triggersFilePath = Path.Combine(AppSettings.DataDirectoryPath, triggersFileName);
-
-            var options = new FbSqlWatcherOptions(GetMainDbConnectionString(),
-                GetTempDbConnectionString());
+            var options = new FbSqlWatcherOptions(TestsContext.MainDbConnectionString,
+                TestsContext.TempDbConnectionString);
 
             var factory = CreateWatcherFactory<TModel>();
             var watcher = factory.CreateWatcher(options);
 
-            var schemeFactory = new SchemeFactory<TModel>(AppConfig.Main.ExternalDbSource,
-                AppConfig.Main.ExternalUser, AppConfig.Main.ExternalPassword);
+            var schemeFactory = new SchemeFactory<TModel>(TestsContext.ExternalDbSource,
+                TestsContext.ExternalUser, TestsContext.ExternalPassword);
 
             watcher.AddTriggers(schemeFactory.CreateSchemes(TriggerType.Insert,
                 TriggerType.Delete, TriggerType.Update));
@@ -74,18 +70,9 @@ namespace DbAgent.Client.Helpers
         private static IWatcherFactory<TModel> CreateWatcherFactory<TModel>()
             where TModel : IModel, new()
         {
-            var factory = new WatcherFactory<TModel>(LogSettings.LoggerFactory);
+            var factory = new WatcherFactory<TModel>();
             return factory;
         }
-
-        private static string GetMainDbConnectionString()
-        {
-            return Properties.Resources.maindb_connectionstring_sql;
-        }
-
-        private static string GetTempDbConnectionString()
-        {
-            return Properties.Resources.tempdb_connectionstring_sql;
-        }
+        
     }
 }

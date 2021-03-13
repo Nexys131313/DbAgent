@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DbAgent.Watcher.Tests.Properties {
+namespace DbAgent.Tests.Core.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace DbAgent.Watcher.Tests.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DbAgent.Watcher.Tests.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DbAgent.Tests.Core.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,50 @@ namespace DbAgent.Watcher.Tests.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User=SYSDBA;
+        ///Password=masterkey;
+        ///Database=C:\DataBases\TempDB.FDB;
+        ///DataSource=localhost;
+        ///Port=3050;
+        ///Dialect=3;
+        ///Charset=NONE;
+        ///Role=;
+        ///Connection lifetime=15;
+        ///Pooling=true;
+        ///MinPoolSize=0;
+        ///MaxPoolSize=50;
+        ///Packet Size=8192;
+        ///ServerType=0;.
+        /// </summary>
+        internal static string maindb_connectionstring_sql {
+            get {
+                return ResourceManager.GetString("maindb_connectionstring_sql", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User=SYSDBA;
+        ///Password=masterkey;
+        ///Database=C:\DataBases\ACTIONSDB.FDB;
+        ///DataSource=localhost;
+        ///Port=3050;
+        ///Dialect=3;
+        ///Charset=NONE;
+        ///Role=;
+        ///Connection lifetime=15;
+        ///Pooling=true;
+        ///MinPoolSize=0;
+        ///MaxPoolSize=50;
+        ///Packet Size=8192;
+        ///ServerType=0;.
+        /// </summary>
+        internal static string tempdb_connectionstring_sql {
+            get {
+                return ResourceManager.GetString("tempdb_connectionstring_sql", resourceCulture);
             }
         }
     }

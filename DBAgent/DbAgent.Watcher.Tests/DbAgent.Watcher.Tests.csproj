@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\DBAgent.Core\DbAgent.Watcher.csproj" />
     <ProjectReference Include="..\..\DbAgent.Service\DbAgent.Service.csproj" />
+    <ProjectReference Include="..\DbAgent.Tests.Core\DbAgent.Tests.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
