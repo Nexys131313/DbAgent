@@ -1,5 +1,4 @@
-﻿using DBAgent.Watcher;
-using DbAgent.Watcher.Core;
+﻿using DbAgent.Watcher.Core;
 using DbAgent.Watcher.Models;
 
 namespace DbAgent.Watcher

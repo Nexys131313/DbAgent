@@ -1,5 +1,4 @@
 ﻿using DbAgent.Service.FireBird;
-using DBAgent.Watcher;
 using DbAgent.Watcher.Models;
 using DbAgent.Watcher.Scheme;
 using DbAgent.Tests.Core;

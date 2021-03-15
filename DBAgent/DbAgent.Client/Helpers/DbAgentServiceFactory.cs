@@ -6,7 +6,6 @@ using DbAgent.Redis;
 using DbAgent.Service;
 using DbAgent.Service.FireBird;
 using DbAgent.Watcher;
-using DBAgent.Watcher;
 using DbAgent.Watcher.Attributes;
 using DbAgent.Watcher.Core;
 using DBAgent.Watcher.Enums;
