@@ -112,7 +112,6 @@
     <Compile Include="Events\Handlers\TableChangedEventHandler.cs" />
     <Compile Include="Extensions\FbReaderEx.cs" />
     <Compile Include="FbSqlWatcher.cs" />
-    <Compile Include="FbSqlWatcherOptions.cs" />
     <Compile Include="IFbWatcher.cs" />
     <Compile Include="IWatcherFactory.cs" />
     <Compile Include="Scheme\DefaultSqlBuilder.cs" />
@@ -144,6 +143,5 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using DbAgent.Client.Common;
 using DbAgent.Redis;
 using DbAgent.Service;
@@ -10,6 +8,7 @@ using DbAgent.Service.FireBird;
 using DbAgent.Watcher;
 using DBAgent.Watcher;
 using DbAgent.Watcher.Attributes;
+using DbAgent.Watcher.Core;
 using DBAgent.Watcher.Enums;
 using DbAgent.Watcher.Models;
 using DbAgent.Watcher.Scheme;
@@ -56,7 +55,7 @@ namespace DbAgent.Client.Helpers
             var triggersFileName = $"{tableName}_TRIGGERS.json";
             var triggersFilePath = Path.Combine(AppSettings.DataDirectoryPath, triggersFileName);
 
-            var options = new FbSqlWatcherOptions(GetMainDbConnectionString(),
+            var options = new WatcherOptions(GetMainDbConnectionString(),
                 GetTempDbConnectionString());
 
             var factory = CreateWatcherFactory<TModel>();

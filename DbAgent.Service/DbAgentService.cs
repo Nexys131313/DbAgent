@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using DbAgent.Redis;
 using DbAgent.Service.Events.Args;
 using DbAgent.Service.Events.Handlers;
 using DbAgent.Service.FireBird;
 using DbAgent.Watcher;
-using DBAgent.Watcher;
 using DbAgent.Watcher.Models;
-using Melnik.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace DbAgent.Service

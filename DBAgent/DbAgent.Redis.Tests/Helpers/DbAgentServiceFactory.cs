@@ -6,6 +6,7 @@ using DbAgent.Tests.Core;
 using DbAgent.Watcher;
 using DBAgent.Watcher;
 using DbAgent.Watcher.Attributes;
+using DbAgent.Watcher.Core;
 using DBAgent.Watcher.Enums;
 using DbAgent.Watcher.Models;
 using DbAgent.Watcher.Scheme;
@@ -52,7 +53,7 @@ namespace DbAgent.Service.Tests.Helpers
             if (string.IsNullOrWhiteSpace(tableName))
                 throw new Exception($"Can't extract table name from: {typeof(TModel)}");
 
-            var options = new FbSqlWatcherOptions(TestsContext.MainDbConnectionString,
+            var options = new WatcherOptions(TestsContext.MainDbConnectionString,
                 TestsContext.TempDbConnectionString);
 
             var factory = CreateWatcherFactory<TModel>();

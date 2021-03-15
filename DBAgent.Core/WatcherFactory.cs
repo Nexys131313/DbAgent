@@ -1,4 +1,5 @@
 ﻿using DBAgent.Watcher;
+using DbAgent.Watcher.Core;
 using DbAgent.Watcher.Models;
 using DbAgent.Watcher.Scheme;
 using Microsoft.Extensions.Logging;
@@ -29,7 +30,7 @@ namespace DbAgent.Watcher
             _loggerFactory = loggerFactory;
         }
 
-        public IFbWatcher<TModel> CreateWatcher(FbSqlWatcherOptions options)
+        public IFbWatcher<TModel> CreateWatcher(WatcherOptions options)
         {
             var logger = _loggerFactory.CreateLogger<FbSqlWatcher<TModel>>();
             return new FbSqlWatcher<TModel>(options, _sqlBuilder, logger);

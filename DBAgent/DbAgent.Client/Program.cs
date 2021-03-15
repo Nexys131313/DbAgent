@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using DbAgent.Client.Common;
 using DbAgent.Client.Helpers;
-using DbAgent.Service;
-using DbAgent.Watcher;
-using DBAgent.Watcher;
-using DbAgent.Watcher.Attributes;
 using DbAgent.Watcher.Models;
 using DBAgent.Watcher.Models;
 using Microsoft.Extensions.Logging;

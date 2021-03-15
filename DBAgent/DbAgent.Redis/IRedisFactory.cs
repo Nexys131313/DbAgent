@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DbAgent.Watcher.Models;
+﻿using DbAgent.Watcher.Models;
 
 namespace DbAgent.Redis
 {

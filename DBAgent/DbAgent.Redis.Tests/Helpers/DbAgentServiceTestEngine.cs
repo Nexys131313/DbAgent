@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DbAgent.Service.FireBird;
 using DbAgent.Tests.Core;
-using DbAgent.Watcher;
-using DBAgent.Watcher.Enums;
 using DbAgent.Watcher.Models;
-using DbAgent.Watcher.Scheme;
 
 namespace DbAgent.Service.Tests.Helpers
 {

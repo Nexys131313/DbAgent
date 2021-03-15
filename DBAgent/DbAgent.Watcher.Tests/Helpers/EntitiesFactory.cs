@@ -3,6 +3,7 @@ using DBAgent.Watcher;
 using DbAgent.Watcher.Models;
 using DbAgent.Watcher.Scheme;
 using DbAgent.Tests.Core;
+using DbAgent.Watcher.Core;
 
 namespace DbAgent.Watcher.Tests.Helpers
 {
@@ -12,7 +13,7 @@ namespace DbAgent.Watcher.Tests.Helpers
             where TModel : IModel, new()
         {
             var factory = new WatcherFactory<TModel>();
-            var watcherOptions = new FbSqlWatcherOptions(TestsContext.MainDbConnectionString,
+            var watcherOptions = new WatcherOptions(TestsContext.MainDbConnectionString,
                 TestsContext.TempDbConnectionString);
             return factory.CreateWatcher(watcherOptions);
 

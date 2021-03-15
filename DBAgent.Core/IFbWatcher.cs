@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DBAgent.Watcher.Entities;
 using DbAgent.Watcher.Events.Handlers;
 using DbAgent.Watcher.Models;
 using DbAgent.Watcher.Scheme;
-using FirebirdSql.Data.FirebirdClient;
-using Melnik.Logging;
-using Microsoft.Extensions.Logging;
 
 namespace DbAgent.Watcher
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using DbAgent.Watcher;
 using DbAgent.Watcher.Attributes;
+using DbAgent.Watcher.Core;
 using DBAgent.Watcher.Entities;
 using DbAgent.Watcher.Events.Args;
 using DbAgent.Watcher.Events.Handlers;
@@ -20,17 +21,17 @@ namespace DBAgent.Watcher
     internal class FbSqlWatcher<TModel> : IFbWatcher<TModel> where TModel : IModel, new()
     {
         private readonly List<TriggerMetaData> _triggers = new List<TriggerMetaData>();
-        private FbSqlWatcherOptions _options;
+        private WatcherOptions _options;
         private FbSqlReader _tempDbReader;
         private FbRemoteEvent _remoteEvent;
 
-        public FbSqlWatcher(FbSqlWatcherOptions options, ISqlBuilder sqlBuilder)
+        public FbSqlWatcher(WatcherOptions options, ISqlBuilder sqlBuilder)
         {
             InitializeInternal(options);
             SqlBuilder = sqlBuilder;
         }
 
-        public FbSqlWatcher(FbSqlWatcherOptions options, ISqlBuilder sqlBuilder, ILogger logger)
+        public FbSqlWatcher(WatcherOptions options, ISqlBuilder sqlBuilder, ILogger logger)
         {
             InitializeInternal(options);
             SqlBuilder = sqlBuilder;
@@ -113,7 +114,7 @@ namespace DBAgent.Watcher
             }
         }
 
-        private void InitializeInternal(FbSqlWatcherOptions options)
+        private void InitializeInternal(WatcherOptions options)
         {
             _options = options;
             _tempDbReader = new FbSqlReader(options.TempDbConnectionString);

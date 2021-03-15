@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DbAgent.Tests.Core;
-using DBAgent.Watcher;
 using DBAgent.Watcher.Enums;
 using DbAgent.Watcher.Models;
 using DbAgent.Watcher.Scheme;

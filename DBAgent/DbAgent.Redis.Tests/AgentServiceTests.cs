@@ -1,5 +1,3 @@
-using System;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using DbAgent.Service.FireBird;
 using DbAgent.Service.Tests.Helpers;
